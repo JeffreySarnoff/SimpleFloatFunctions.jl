@@ -2,6 +2,8 @@ module SimpleFloatFunctions
 
 export square, cube, invsquare, invcube, spread, tld, sld
 
+const SysFloat = Union{Float64, Float32, Float16}
+
 """
     square(x)
 
@@ -91,6 +93,90 @@ like cld @ref(cld), fld @ref(fld)
 """
 function sld(x::T) where T<:AbstractFloat
     return spread(x/y)
+end
+
+#=
+    errorfree transformations (internal use)
+=#
+
+"""
+    two_sum_hilo(a, b)
+*unchecked* requirement `|a| ≥ |b|`
+Computes `s = fl(a+b)` and `e = err(a+b)`.
+"""
+@inline function two_sum_hilo(a::T, b::T) where T<:SysFloat
+    s = a + b
+    e = b - (s - a)
+    return s, e
+end
+
+"""
+    two_sum(a, b)
+Computes `s = fl(a+b)` and `e = err(a+b)`.
+"""
+@inline function two_sum(a::T, b::T) where T<:SysFloat
+    s = a + b
+    v = s - a
+    e = (a - (s - v)) + (b - v)
+    return s, e
+end
+
+"""
+    two_diff_hilo(a, b)
+    
+*unchecked* requirement `|a| ≥ |b|`
+Computes `s = fl(a-b)` and `e = err(a-b)`.
+"""
+@inline function two_diff_hilo(a::T, b::T) where T<:SysFloat
+    s = a - b
+    e = (a - s) - b
+    s, e
+end
+
+"""
+    two_diff(a, b)
+Computes `s = fl(a-b)` and `e = err(a-b)`.
+"""
+@inline function two_diff(a::T, b::T) where T<:SysFloat
+    s = a - b
+    v = s - a
+    e = (a - (s - v)) - (b + v)
+
+    s, e
+end
+
+"""
+    two_prod(a, b)
+Computes `s = fl(a*b)` and `e = err(a*b)`.
+"""
+@inline function two_prod(a::T, b::T) where T<:SysFloat
+    p = a * b
+    e = fma(a, b, -p)
+    p, e
+end
+
+"""
+    one_square(a)
+Computes `s = fl(a*a)` and `e = err(a*a)`.
+"""
+@inline function one_square(a::T) where T<:SysFloat
+    p = a * a
+    e = fma(a, a, -p)
+    p, e
+end
+
+"""
+    one_cube(a)
+Computes `s = fl(a*a*a)` and `e = err(a*a*a)`.
+"""
+@inline function one_cube(a::T) where T<:SysFloat
+    hi, lo = one_square(a)
+    hihi, hilo = two_prod(hi, a)
+    lohi, lolo = two_prod(lo, a)
+    hilo, lohi = two_sum_hilo(hilo, lohi)
+    hi, lo = two_sum_hilo(hihi, hilo)
+    lo += lohi + lolo
+    return hi, lo
 end
 
 
