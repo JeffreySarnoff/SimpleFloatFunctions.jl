@@ -44,7 +44,12 @@ function fourth(x::T) where T<:SysFloat
     hi = one_cube_hi(x)
     return hi*x
 end
-    
+
+function fourth(x::T) where T<:Number
+    result = x*x*x*x
+    return result
+end
+
 
 """
     invsquare(x)
@@ -195,5 +200,28 @@ Computes `s = fl(a*a*a)`.
 end
 
 
+# like doubledouble
+
+# Algorithm 6 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
+function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
+    hi, lo = two_sum(xhi, yhi)
+    thi, tlo = two_sum(xlo, ylo)
+    c = lo + thi
+    hi, lo = two_sum_hilo(hi, c)
+    c = tlo + lo
+    hi, lo = two_sum_hilo(hi, c)
+    return hi, lo
+end
+
+# Algorithm 12 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
+function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
+    hi, lo = two_prod(xhi, yhi)
+    t = xlo * ylo
+    t = fma(xhi, ylo, t)
+    t = fma(xlo, yhi, t)
+    t = lo + t
+    hi, lo = two_sum_hilo(hi, t)
+    return hi, lo
+end
 
 end # module SimpleFloatFunctions
