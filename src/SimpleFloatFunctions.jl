@@ -41,8 +41,9 @@ end
 x^4
 """
 function fourth(x::T) where T<:SysFloat
-    hi1, lo1 = one_square(x)
-    hi, lo = two_prod(hi1, hi1, lo1*lo1)
+    hi = one_cube_hi(x)
+    return hi*x
+end
     
 
 """
@@ -167,6 +168,7 @@ end
 
 """
     one_cube(a)
+
 Computes `s = fl(a*a*a)` and `e = err(a*a*a)`.
 """
 @inline function one_cube(a::T) where T<:SysFloat
@@ -177,6 +179,19 @@ Computes `s = fl(a*a*a)` and `e = err(a*a*a)`.
     hi, lo = two_sum_hilo(hihi, hilo)
     lo += lohi + lolo
     return hi, lo
+end
+
+"""
+    one_cube_hi(a)
+
+Computes `s = fl(a*a*a)`.
+"""
+@inline function one_cube_hi(a::T) where T<:SysFloat
+    hi, lo = one_square(a)
+    hi, md = two_prod(hi, a)
+    md += lo * a
+    hi += md
+    return hi
 end
 
 
