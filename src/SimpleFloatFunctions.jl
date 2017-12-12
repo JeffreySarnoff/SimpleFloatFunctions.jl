@@ -241,9 +241,8 @@ end
 function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
     hi, lo = two_prod(xhi, yhi)
     t = xlo * ylo
-    t = fma(xhi, ylo, t)t = lo + t
-247
-    
+    t = fma(xhi, ylo, t)
+    t = lo + t
     t = fma(xlo, yhi, t)
     t = lo + t
     hi, lo = two_sum_hilo(hi, t)
