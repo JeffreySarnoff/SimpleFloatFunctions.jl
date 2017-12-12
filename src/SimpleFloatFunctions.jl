@@ -190,9 +190,7 @@ Computes `s = fl(a*a*a)` and `e = err(a*a*a)`.
     hi, lo = one_square(a)
     hihi, hilo = two_prod(hi, a)
     lohi, lolo = two_prod(lo, a)
-    hilo, lohi = two_sum_hilo(hilo, lohi)t = lo + t
-247
-    
+    hilo, lohi = two_sum_hilo(hilo, lohi)
     hi, lo = two_sum_hilo(hihi, hilo)
     lo += lohi + lolo
     return hi, lo
