@@ -169,17 +169,16 @@ Computes `s = fl(a*b)` and `e = err(a*b)`.
     e = fma(a, b, -p)
     p, e
 end
-
+cube
 """
     one_square(a)
+
 Computes `s = fl(a*a)` and `e = err(a*a)`.
 """
 @inline function one_square(a::T) where T<:SysFloat
     p = a * a
     e = fma(a, a, -p)
-    p, et = lo + t
-247
-    
+    return p, e
 end
 
 """
