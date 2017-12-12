@@ -41,8 +41,15 @@ end
 x^4
 """
 function fourth(x::T) where T<:SysFloat
-    hi = one_cube_hi(x)
-    return hi*x
+    hi, lo = one_cube(x)
+    hi = prod_dd_fl_hi(hi, lo, x)
+    return hi
+end
+
+function fourth1(x::T) where T<:SysFloat
+    hi, lo = one_square(x)
+    hi = prod_dd_dd_hi(hi, lo, hi, lo)
+    return hi
 end
 
 function fourth(x::T) where T<:Number
@@ -129,6 +136,8 @@ end
 
 """
     two_diff_hilo(a, b)
+    t = lo + t
+247
     
 *unchecked* requirement `|a| ≥ |b|`
 Computes `s = fl(a-b)` and `e = err(a-b)`.
@@ -168,7 +177,9 @@ Computes `s = fl(a*a)` and `e = err(a*a)`.
 @inline function one_square(a::T) where T<:SysFloat
     p = a * a
     e = fma(a, a, -p)
-    p, e
+    p, et = lo + t
+247
+    
 end
 
 """
@@ -180,7 +191,9 @@ Computes `s = fl(a*a*a)` and `e = err(a*a*a)`.
     hi, lo = one_square(a)
     hihi, hilo = two_prod(hi, a)
     lohi, lolo = two_prod(lo, a)
-    hilo, lohi = two_sum_hilo(hilo, lohi)
+    hilo, lohi = two_sum_hilo(hilo, lohi)t = lo + t
+247
+    
     hi, lo = two_sum_hilo(hihi, hilo)
     lo += lohi + lolo
     return hi, lo
@@ -213,15 +226,40 @@ function add_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
     return hi, lo
 end
 
+function prod_dd_fl(ahi, alo, b)
+    hi, lo = two_prod(ahi, b)
+    lo += alo * b
+    hi, lo = two_sum_hilo(hi, lo)
+    return hi, lo
+end
+
+function prod_dd_fl_hi(ahi, alo, b)
+    hi, lo = two_prod(ahi, b)
+    lo += alo * b
+    hi += lo
+    return hi
+end
+
 # Algorithm 12 from Tight and rigourous error bounds for basic building blocks of double-word arithmetic
 function prod_dd_dd(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
     hi, lo = two_prod(xhi, yhi)
     t = xlo * ylo
-    t = fma(xhi, ylo, t)
+    t = fma(xhi, ylo, t)t = lo + t
+247
+    
     t = fma(xlo, yhi, t)
     t = lo + t
     hi, lo = two_sum_hilo(hi, t)
     return hi, lo
+end
+
+function prod_dd_dd_hi(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
+    hi, lo = two_prod(xhi, yhi)
+    t = xlo * ylo
+    t = fma(xhi, ylo, t)
+    t = fma(xlo, yhi, t)
+    hi += lo + t
+    return hi
 end
 
 end # module SimpleFloatFunctions
