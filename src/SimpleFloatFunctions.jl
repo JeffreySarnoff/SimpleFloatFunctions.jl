@@ -1,6 +1,6 @@
 module SimpleFloatFunctions
 
-export square, cube, invsquare, invcube, spread, tld, sld
+export square, cube, invsquare, invcube, invsqrt, invcbrt, spread, tld, sld
 
 const SysFloat = Union{Float64, Float32, Float16}
 
@@ -36,35 +36,12 @@ function cube(x::T) where T<:Number
 end
 
 """
-    fourth(x)
-    
-x^4
-"""
-function fourth(x::T) where T<:SysFloat
-    hi, lo = one_cube(x)
-    hi = prod_dd_fl_hi(hi, lo, x)
-    return hi
-end
-
-function fourth1(x::T) where T<:SysFloat
-    hi, lo = one_square(x)
-    hi = prod_dd_dd_hi(hi, lo, hi, lo)
-    return hi
-end
-
-function fourth(x::T) where T<:Number
-    result = x*x*x*x
-    return result
-end
-
-
-"""
     invsquare(x)
 
 1 / x^2
 """
-function invsquare(x::T) where T<:Number
-    return inv(square(x))
+@inline function invsquare(x::T) where T<:Number
+    return square(inv(x))
 end
 
 """
@@ -72,12 +49,30 @@ end
 
 1 / x^3
 """
-function invcube(x::T) where T<:Number
-    return inv(cube(x))
+@inline function invcube(x::T) where T<:Number
+    return cube(inv(x))
 end
 
 """
-    spread
+    invsqrt(x)
+
+1 / x^(1/2)
+"""
+@inline function invsqrt(x::T) where T<:Number
+    return sqrt(inv(x))
+end
+
+"""
+    invcbrt(x)
+
+1 / x^(1/3)
+"""
+@inline function invcbrt(x::T) where T<:Number
+    return cbrt(inv(x))
+end
+
+"""
+    spread(x)
     
 spread complements trunc()    
 the nearest integer to x, away from zero
