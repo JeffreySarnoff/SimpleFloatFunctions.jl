@@ -8,10 +8,6 @@ const nanbit64 = xor(uint(NaN), uint(Inf))
 const nanbit32 = xor(uint(NaN32), uint(Inf32))
 const nanbit16 = xor(uint(NaN16), uint(Inf16))
 
-nanbit(::Type{Float64}) = nanbit64
-nanbit(::Type{Float32}) = nanbit32
-nanbit(::Type{Float16}) = nanbit16
-
 @inline function isolate_nan(a::T, b::T) where {T<:IEEEFloat}
     return uint(a) | uint(b)
 end
@@ -20,10 +16,20 @@ end
     return a | uint(b)
 end
 
+@inline function isolate_nan(a::U, b::U) where {U<:Unsigned}
+    return a | b
+end
+
 @inline function isolate_nan(vec::AbstractVector{T}) where {T<:IEEEFloat}
     reduce( isolate_nan, vec )
 end
 
-function hasnan(vec::AbstractVector{T}) where {T<:IEEEFloat}
-     nanbit(T) == nanbit(T) & isolate_nan(vec)
+function hasnan(vec::AbstractVector{T}) where {T<:Float64}
+    nanbit64 === nanbit64 & isolate_nan(vec)
+end
+function hasnan(vec::AbstractVector{T}) where {T<:Float32}
+    nanbit32 === nanbit32 & isolate_nan(vec)
+end
+function hasnan(vec::AbstractVector{T}) where {T<:Float16}
+    nanbit16 === nanbit16 & isolate_nan(vec)
 end
