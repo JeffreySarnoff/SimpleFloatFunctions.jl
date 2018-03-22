@@ -5,6 +5,7 @@ export modulo,
 
 const SysFloat = Union{Float64, Float32, Float16}
 
+include("hasnan.jl") # does a vector or an array contain any NaNs
 
 #=
    This well-behaved bounded modulo implementation is from
@@ -267,5 +268,6 @@ function prod_dd_dd_hi(xhi::T, xlo::T, yhi::T, ylo::T) where T<:SysFloat
     hi += lo + t
     return hi
 end
+
 
 end # module SimpleFloatFunctions
