@@ -23,6 +23,11 @@ end
 @inline function isolate_nan(vec::AbstractVector{T}) where {T<:IEEEFloat}
     reduce( isolate_nan, vec )
 end
+#=
+@inline function isolate_nan(vec::AbstractVector{T}) where {T<:IEEEFloat}
+    reduce( isolate_nan, vec )
+end
+=#
 
 function hasnan(vec::AbstractVector{T}) where {T<:Float64}
     nanbit64 === nanbit64 & isolate_nan(vec)
