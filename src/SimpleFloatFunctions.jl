@@ -1,11 +1,19 @@
 module SimpleFloatFunctions
 
-export modulo,
-        square, cube, invsquare, invcube, invsqrt, invcbrt, spread, tld, sld
+export midpoint, # an artful midpoint
+       modulo,
+       square, cube, invsquare, invcube, invsqrt, invcbrt, spread, tld, sld,
 
 const SysFloat = Union{Float64, Float32, Float16}
 
 include("hasnan.jl") # does a vector or an array contain any NaNs
+
+
+function midpoint(x,y)
+    x, y = ifelse(abs(y) > abs(x), (y, x), (x, y))
+    return x - (x/2 - y/2)
+end
+
 
 #=
    This well-behaved bounded modulo implementation is from
