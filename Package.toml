@@ -1,0 +1,14 @@
+desc = "Extra floating-point functions."
+keywords = [julia, floating-point]
+name = "SimpleFloatFunctions"
+uuid = "2c526b83-dfe8-56e7-b186-3217a695f757"
+repo = "https://github.com/JeffreySarnoff/SimpleFloatFunctions.jl.git"
+author = "Jeffrey Sarnoff"
+license = "MIT"
+version = "v0.1.0"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
