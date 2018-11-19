@@ -1,7 +1,7 @@
 module SimpleFloatFunctions
 
 export midpoint, # an artful midpoint
-       modulo,
+       modulo, nint,
        square, cube, invsquare, invcube, invsqrt, invcbrt, spread, tld, sld,
 
 const SysFloat = Union{Float64, Float32, Float16}
@@ -9,7 +9,7 @@ const SysFloat = Union{Float64, Float32, Float16}
 include("hasnan.jl") # does a vector or an array contain any NaNs
 
 
-function midpoint(x,y)
+function midpoint(x::T,y::T) where {T}
     x, y = ifelse(abs(y) > abs(x), (y, x), (x, y))
     return x - (x/2 - y/2)
 end
@@ -21,12 +21,14 @@ end
    by David Monniaux, 2008 
    http://arxiv.org/abs/cs/0701192v5
 =#
-function modulo{T<:DD}(a::T, lowerbound::T, upperbound::T)
+function modulo(a::T, lowerbound::T, upperbound::T) where {T}
     delta = upperbound - lowerbound
     a - (floor((a - lowerbound)/delta) * delta)
 end
 
 
+nint(a::T) where {T<:AbstractFloat} = (trunc(a + copysign(one(T)/2,a)))
+nint(::Type{I}, a::T) where {T<AbstractFloat, I<:Integer} = I(nint(a))
 
 """
     square(x)
